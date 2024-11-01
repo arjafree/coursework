@@ -4,8 +4,11 @@
 #include <stdlib.h>
 #include <time.h>
 #include "robot.h"
+#include <stdbool.h>
 
 bot robot;
+int** grid;
+
 coords generateBot(){
     coords botCoords = randomCooords();
     displayImage("robot.png", botCoords.x, botCoords.y);
@@ -15,10 +18,6 @@ coords generateBot(){
 }
 
 coords moveForward(coords currCoords, int gridSize){
-
-    sleep(500);
-    clear();
-    
     switch(robot.direction){
         //facing forwards
         case(0):
@@ -41,6 +40,15 @@ coords moveForward(coords currCoords, int gridSize){
             break;
     }
     return currCoords;
+}
+
+bool checkForward(coords currCoords){
+    grid = getGrid();
+    switch(robot.direction){
+        currCoords.x-
+        case(0):
+        
+    }
 }
 
 void rotate(int newDirection){

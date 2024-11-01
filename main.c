@@ -5,23 +5,23 @@
 #include <time.h>
 #include <stdlib.h>
 
+size windowSize;
 
 int main(void){
     srand(time(NULL));
-
-    background();
     coords startingCoords;
-    size windowSize;
     windowSize.width = 600;
     windowSize.height = 400;
-    setWindowSize(windowSize.width,windowSize.height);
+    //the space beetween the window and the stadium
     int whitespace = 25;
+    setWindowSize(windowSize.width,windowSize.height);
     int gridSize = 25;
+    background();
     coords markerCoords = drawBackground(whitespace, windowSize, gridSize);
     int** grid = getGrid();
-
     foreground();
     coords botCoords = generateBot();
-    botCoords = moveForward(botCoords, gridSize);
+    sleep(500);
+    clear();
     return 0;
 }

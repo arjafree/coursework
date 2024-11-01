@@ -1,6 +1,7 @@
 #include <stdlib.h>
 typedef struct bot{
     coords botCoords;
+    coords botPixelCoods;
     int direction;
 }bot;
 
