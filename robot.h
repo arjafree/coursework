@@ -1,9 +1,7 @@
-#include <stdlib.h>
-typedef struct bot{
-    coords botCoords;
-    coords botPixelCoods;
+typedef struct Bot{
+    Index botIndex;
+    Coords botPixelCoords;
     int direction;
-}bot;
-
-coords generateBot();
-coords moveForward(coords currCoords, int gridSize);
+}Bot;
+void activateRobot(int gridSize);
+Coords initRobotCoords();

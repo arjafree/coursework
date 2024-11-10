@@ -1,11 +1,21 @@
-typedef struct coords{
+typedef struct Coords{
     int x;
     int y;
-}coords;
-typedef struct size{
+}Coords;
+typedef struct Dimensions{
     int width;
     int height;
-}size;
-coords drawBackground(int whitespace, size stadiumSize, int gridSize);
-coords randomCooords();
+}Dimensions;
+typedef struct Index{
+    int row;
+    int col;
+}Index;
+void drawBackground(int maxMarkers, int maxObs, int whitespace, Dimensions stadiumDimensions);
+Coords randomCoords();
+Index getIndex(Coords botCoords);
+Dimensions getGridDimensions();
+Coords getArenaCoords();
 int** getGrid();
+void clearMarker(Index markerIndex);
+int getNumMarks();
+void freeAll();
