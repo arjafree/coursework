@@ -18,4 +18,5 @@ Coords getArenaCoords();
 int** getGrid();
 void clearMarker(Index markerIndex);
 int getNumMarks();
+void free2d(int** arr);
 void freeAll();

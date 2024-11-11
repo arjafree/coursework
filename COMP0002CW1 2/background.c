@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "graphics.h"
-#include <stdbool.h>
 #include <time.h>
 #include "background.h"
 #include "robot.h"
@@ -10,13 +9,12 @@ int** grid;
 Coords* markers;
 Coords* obstacles;
 int gridSize;
-int markersFound;
 int numMarks;
 Dimensions arenaDimensions;
 Coords arenaCoords;
 
 void generateElements(int maxMarkers, int maxObs);
-void generateExtraFunk();
+void randomlyShapeBackground();
 void free2d(int** arr);
 Dimensions getGridDimensions();
 
@@ -54,7 +52,7 @@ void drawGrid(){
     for (int i = 0; i < getGridDimensions().height; i++) {
         grid[i] = (int*)malloc(getGridDimensions().width * sizeof(int));
         for(int j = 0; j<getGridDimensions().width; j++){
-            //signals an empty square
+            //signals an empty grid square
             grid[i][j] = 1;
             drawRect(currX, currY, gridSize, gridSize);
             currX+=gridSize;
@@ -71,9 +69,8 @@ void drawBackground(int maxMarkers, int maxObs, int whitespace, Dimensions windo
     Dimensions stadiumDimensions = (Dimensions){windowDimensions.width - whitespace*2, windowDimensions.height - whitespace*2};
     drawStadium(stadiumCoords, stadiumDimensions, wallSize);
     drawGrid();
-    generateExtraFunk();
+    randomlyShapeBackground();
     generateElements(maxMarkers, maxObs);
-    markersFound = 0;
 }
 
 void drawMarkers(){
@@ -102,11 +99,8 @@ void generateMarkers(){
     for(int i = 0; i<numMarks; i++){
         currMkrCoords = randomCoords();
         currMkrIndex = getIndex(currMkrCoords);
-        if(checkDuplicateMarkers(currMkrCoords)){
+        if(checkDuplicateMarkers(currMkrCoords)||!grid[currMkrIndex.row][currMkrIndex.col]||grid[currMkrIndex.row][currMkrIndex.col]==3){
             i--;
-        }
-        else if(!grid[currMkrIndex.row][currMkrIndex.col]||grid[currMkrIndex.row][currMkrIndex.col]==3){
-            i--;;
         }
         else{
             grid[currMkrIndex.row][currMkrIndex.col] = 2;
@@ -117,14 +111,14 @@ void generateMarkers(){
 }
 
 
-bool isPathAccessible(Index startIndex, Index targetIndex, int** visited) {
+int isPathAccessible(Index startIndex, Index targetIndex, int** visited) {
     //maxIndex = rows - 1, cols - 1
     if (startIndex.row < 0 || startIndex.col < 0 || startIndex.row > getGridDimensions().height-1 || startIndex.col > getGridDimensions().width-1||
         !grid[startIndex.row][startIndex.col]|| grid[startIndex.row][startIndex.col]==3|| visited[startIndex.row][startIndex.col]){
-        return false;
+        return 0;
     }
     if (startIndex.row == targetIndex.row && startIndex.col == targetIndex.col) {
-        return true;
+        return 1;
     }
     visited[startIndex.row][startIndex.col] = 1;
     Index startIndexLeft = startIndex;
@@ -152,13 +146,22 @@ int** mallocVisited(){
 
 }
 
+void clearVisited(int** visited){
+    for (int i = 0; i < getGridDimensions().height; i++) {
+        for (int j = 0; j < getGridDimensions().width; j++) {
+            visited[i][j] = 0;
+        }
+    }
+}
+
+
 void generateElements(int maxMarkers, int maxObs){
     numMarks = rand()%maxMarkers+1;
     int numObs = rand()%maxObs+1;
     generateMarkers();
     Coords startingCoords = initRobotCoords();
     Index startingIndex = getIndex(startingCoords);
-    int** visited;
+    int** visited = mallocVisited();
     setColour(red);
     for (int i = 0; i < numObs; i++) {
         Coords obsCoords;
@@ -166,7 +169,7 @@ void generateElements(int maxMarkers, int maxObs){
         do {
             obsCoords = randomCoords();
             obsIndex = getIndex(obsCoords);
-            visited = mallocVisited();
+            clearVisited(visited);
         } while (grid[obsIndex.row][obsIndex.col] != 1 || !isPathAccessible(startingIndex, obsIndex, visited));
         // Place the obstacle
         grid[obsIndex.row][obsIndex.col] = 0;
@@ -205,7 +208,7 @@ void clearMarker(Index markerIndex){
     foreground();
 }
 
-void generateExtraFunk(){
+void randomlyShapeBackground(){
     setColour(gray);
     int Y = rand()%(getGridDimensions().height - getGridDimensions().height/2) + getGridDimensions().height/4;
     Coords currCoords;
